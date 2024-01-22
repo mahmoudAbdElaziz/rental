@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="rental_receipt_order" model="ir.actions.report">
+        <field name="name">Receipt</field>
+        <field name="model">rental.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">rental.rental_receipt_order_template</field>
+        <field name="report_file">rental.rental_receipt_order_template</field>
+        <field name="print_report_name">'Receipt - %s' % (object.name).replace('/', '')</field>
+        <field name="binding_model_id" ref="model_rental_order"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="rental.pos_paperformat"/>
+    </record>
+
+    <template id="rental_receipt_order_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <div id="invoice-POS">
+                    <center id="top">
+                        <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)"
+                             style="max-height: 150px;" alt="Logo"/>
+                        <h3>
+                            <span t-field="o.company_id.name"/>
+                        </h3>
+                    </center>
+                    <div id="mid" style="line-height:26px;margin-bottom: 10px;">
+                        <div>
+                            <strong>
+                                Invoice No:
+                            </strong>
+                            <span t-field="o.name"/>
+                        </div>
+                        <div>
+                            <strong>
+                                Customer:
+                            </strong>
+                            <span t-field="o.partner_id.name"/>
+                        </div>
+                        <div>
+                            <strong>
+                                mobile:
+                            </strong>
+                            <span t-field="o.mobile"/>
+                        </div>
+                    </div>
+                    <style>
+                        table {
+                        border-collapse: collapse;
+                        width: 100%;
+                        }
+                        table td, table th {
+                        border: 1px solid #bebebe;
+                        padding: 5px;
+                        }
+                        table th {
+                        padding-top: 12px;
+                        padding-bottom: 12px;
+                        background-color: #e7e7e7;
+                        }
+                    </style>
+                    <table class="text-start">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">
+                                    <strong>Product</strong>
+                                </th>
+                                <th style="width: 30%;">
+                                    <strong>Code</strong>
+                                </th>
+                                <th style="width: 10%;">
+                                    <strong>Price</strong>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="o.line_ids" t-as="line">
+                                <td>
+                                    <span t-field="line.product_id.name"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.product_id.barcode"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.price"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br/>
+                    <table class="text-start">
+                        <tr>
+                            <th style="width: 40%;">
+                                <strong>Total</strong>
+                            </th>
+                            <td>
+                                <span t-field="o.total_amount"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <strong>Paid</strong>
+                            </th>
+                            <td>
+                                <span t-field="o.paid_amount"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                <strong>Remainder</strong>
+                            </th>
+                            <td>
+                                <span t-field="o.remainder_amount"/>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <center id="top">
+                        <p>
+                            <span>Thanks For Your Visiting...</span>
+                        </p>
+                    </center>
+
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

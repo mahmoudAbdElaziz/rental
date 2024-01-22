@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_rental_order_user,access_rental_order_user,model_rental_order,base.group_user,1,1,1,1
+access_rental_order_line_user,access_rental_order_line_user,model_rental_order_line,base.group_user,1,1,1,1
+access_product_color,access_product_color,model_product_color,base.group_user,1,1,1,1
+access_product_brand,access_product_brand,model_product_brand,base.group_user,1,1,1,1
+access_product_model,access_product_model,model_product_model,base.group_user,1,1,1,1

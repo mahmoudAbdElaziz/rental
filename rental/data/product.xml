@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="product_brand_1" model="product.brand">
+            <field name="name">H&amp;M</field>
+        </record>
+
+        <record id="product_brand_2" model="product.brand">
+            <field name="name">Levis</field>
+        </record>
+
+        <record id="product_brand_3" model="product.brand">
+            <field name="name">Forever New</field>
+        </record>
+
+        <record id="product_brand_4" model="product.brand">
+            <field name="name">Westside</field>
+        </record>
+
+        <record id="product_brand_5" model="product.brand">
+            <field name="name">AND</field>
+        </record>
+
+        <record id="product_brand_6" model="product.brand">
+            <field name="name">ONLY</field>
+        </record>
+
+        <record id="product_brand_7" model="product.brand">
+            <field name="name">Aurelia</field>
+        </record>
+
+        <record id="product_brand_8" model="product.brand">
+            <field name="name">Madame</field>
+        </record>
+
+        <record id="product_brand_9" model="product.brand">
+            <field name="name">Pantaloons</field>
+        </record>
+
+        <record id="product_product_1" model="product.product">
+            <field name="name">Casual Dress</field>
+            <field name="size">45</field>
+            <field name="year">2024</field>
+            <field name="state">available</field>
+            <field name="lst_price">300</field>
+            <field name="standard_price">1500</field>
+            <field name="barcode">123599001</field>
+            <field name="brand_id" ref="rental.product_brand_1"/>
+            <field name="color_id" ref="rental.product_color_white"/>
+             <field name="image_1920" type="base64" file="rental/static/src/img/dress.png"/>
+        </record>
+
+
+    </data>
+</odoo>

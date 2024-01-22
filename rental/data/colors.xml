@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="product_color_white" model="product.color">
+            <field name="name">White</field>
+        </record>
+
+        <record id="product_color_black" model="product.color">
+            <field name="name">Black</field>
+        </record>
+
+        <record id="product_color_blue" model="product.color">
+            <field name="name">Blue</field>
+        </record>
+
+        <record id="product_color_green" model="product.color">
+            <field name="name">Green</field>
+        </record>
+
+        <record id="product_color_red" model="product.color">
+            <field name="name">Red</field>
+        </record>
+
+        <record id="product_color_yellow" model="product.color">
+            <field name="name">Yellow</field>
+        </record>
+
+        <record id="product_color_orange" model="product.color">
+            <field name="name">Orange</field>
+        </record>
+
+        <record id="product_color_pink" model="product.color">
+            <field name="name">Pink</field>
+        </record>
+
+        <record id="product_color_purple" model="product.color">
+            <field name="name">Purple</field>
+        </record>
+
+        <record id="product_color_gray" model="product.color">
+            <field name="name">Gray</field>
+        </record>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="rental_order_view_form" model="ir.ui.view">
+            <field name="name">rental.order.view.form</field>
+            <field name="model">rental.order</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="confirm_action" string="Confirm" class="oe_highlight"
+                                invisible="state != 'pending'" type="object"/>
+                        <button name="pickup_action" string="Customer Pickup" class="oe_highlight"
+                                invisible="state != 'confirm'" type="object"/>
+                        <button name="return_action" string="Return" class="oe_highlight"
+                                invisible="state != 'pickup'" type="object"/>
+                        <button name="cancel_action" string="Cancel" class="oe_highlight"
+                                invisible="state not in ('confirm')" type="object"/>
+                        <button name="print_receipt" string="Print Receipt" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="pending,confirm,pickup,return"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="partner_id" widget="res_partner_many2one"
+                                       placeholder="Type to find a customer..." readonly="state != 'pending'"/>
+
+                                <field name="mobile" readonly="state != 'pending'"/>
+                            </group>
+                            <group>
+                                <label for="date_from" string="Period"/>
+                                <div>
+                                    <field name="date_from" widget="daterange" class="oe_inline"
+                                           readonly="state != 'pending'"
+                                           options="{'related_end_date': 'date_to'}"/>
+                                    -
+                                    <field name="date_to" widget="daterange" class="oe_inline"
+                                           readonly="state != 'pending'"
+                                           options="{'related_start_date': 'date_from'}"/>
+                                </div>
+                                <field name="paid_amount" readonly="state not in ('pending','confirm','pickup')"/>
+                                <field name="remainder_amount"/>
+                                <field name="total_amount"/>
+                                <field name="product_ids" invisible="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Products">
+                                <field name="line_ids" readonly="state != 'pending'">
+                                    <tree editable="bottom">
+                                        <field name="product_id" domain="[('id','not in',parent.product_ids)]"/>
+                                        <field name="price"/>
+                                        <field name="size"/>
+                                        <field name="color_id"/>
+                                        <field name="barcode" optional="hide"/>
+                                        <field name="year" optional="hide"/>
+                                        <field name="brand_id" optional="hide"/>
+                                        <field name="model_id" optional="hide"/>
+                                        <field name="notes"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Other Info">
+                                <group>
+                                    <group>
+                                        <field name="confirmation_date"/>
+                                        <field name="pickup_date"/>
+                                        <field name="return_date"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="rental_order_view_tree" model="ir.ui.view">
+            <field name="name">rental.order.view.tree</field>
+            <field name="model">rental.order</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="mobile"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="paid_amount"/>
+                    <field name="remainder_amount"/>
+                    <field name="total_amount"/>
+                    <field name="is_late" optional="hide"/>
+                    <field name="product_ids" widget="many2many_tags" optional="hide"/>
+                    <field name="state" widget="badge"
+                           decoration-success="state in ('confirm','pickup')"
+                           decoration-danger="state == 'cancel'"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="rental_order_view_kanban" model="ir.ui.view">
+            <field name="name">rental.order.kanban.view.tree</field>
+            <field name="model">rental.order</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile" string="Models">
+                    <field name="name"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click oe_kanban_details">
+                                <div>
+                                    <strong>
+                                        <field name="name"/>
+                                    </strong>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+
+        <record id="rental_order_action" model="ir.actions.act_window">
+            <field name="name">Rental Order</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">rental.order</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="rental_root" name="Rentals"
+                  web_icon="rental,static/description/icon.png"
+                  sequence="1"/>
+
+        <menuitem id="rental_order_menuitem" name="Rentals" parent="rental_root"
+
+                  action="rental_order_action" sequence="1"/>
+
+    </data>
+</odoo>

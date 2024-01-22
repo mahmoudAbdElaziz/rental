@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="product_view_form" model="ir.ui.view">
+            <field name="name">product.view.form</field>
+            <field name="model">product.product</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="booking_action" string="Booking" invisible="state != 'available'"
+                                class="oe_highlight" type="object"/>
+                        <button name="selling_action" string="Selling" invisible="state != 'available'" type="object"/>
+                        <button name="back_action" string="Back To Stock" invisible="state != 'sold'" type="object"/>
+                        <field name="state" widget="statusbar" statusbar_visible="available,out,sold"/>
+                    </header>
+
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button"
+                                    name="open_booking_list"
+                                    type="object"
+                                    icon="fa-list-ul">
+                                <field string="Rentals" name="booking_count" widget="statinfo"/>
+                            </button>
+                            <button class="oe_stat_button"
+                                    name="action_open_documents"
+                                    type="object"
+                                    icon="fa-file-text-o">
+                                <field string="Documents" name="product_document_count" widget="statinfo"/>
+                            </button>
+
+                        </div>
+                        <widget name="web_ribbon" title="Out Of Stock" bg_color="text-bg-danger"
+                                invisible="state != 'out'"/>
+                        <widget name="web_ribbon" title="Sold" bg_color="text-bg-danger"
+                                invisible="state != 'sold'"/>
+
+
+                        <field name="image_1920" widget="image" class="oe_avatar"
+                               options="{'preview_image': 'image_128'}"/>
+                        <div class="oe_title">
+                            <label for="name" string="Product Name"/>
+                            <h1>
+                                <div class="d-flex">
+                                    <field name="priority" widget="priority" class="me-3"/>
+                                    <field class="text-break" name="name" options="{'line_breaks': False}" widget="text"
+                                           readonly="state == 'sold'"
+                                           placeholder="e.g. Casual Dress"/>
+                                </div>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="lst_price" readonly="state == 'sold'"/>
+                                <field name="standard_price" readonly="state == 'sold'"/>
+                                <field name="size" placeholder="45" readonly="state == 'sold'"/>
+                                <field name="barcode" placeholder="12345679" readonly="state == 'sold'"/>
+                            </group>
+                            <group>
+                                <field name="color_id" options='{"no_open": True}' readonly="state == 'sold'"/>
+                                <field name="year" placeholder="Select Year..." readonly="state == 'sold'"/>
+                                <field name="brand_id" options='{"no_open": True}' readonly="state == 'sold'"/>
+                                <field name="model_id" options='{"no_open": True}' readonly="state == 'sold'"/>
+                            </group>
+                        </group>
+                        <!--                          <field name="product_properties" columns="2"/>-->
+                        <notebook>
+                            <page name="rental" string="Rentals">
+                                <field name="rental_line_ids">
+                                    <tree editable="bottom" create="false" delete="false">
+                                        <field name="name"/>
+                                        <field name="partner_id"/>
+                                        <field name="mobile"/>
+                                        <field name="date_from"/>
+                                        <field name="date_to"/>
+                                        <field name="paid_amount"/>
+                                        <field name="remainder_amount"/>
+                                        <field name="total_amount"/>
+                                        <field name="state" widget="badge"
+                                               decoration-success="state in ('confirm','pickup')"
+                                               decoration-danger="state == 'cancel'"/>
+                                        <button name="view_booking_action" type="object" string="View"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Other Info">
+                                <group>
+                                    <field colspan="2" name="description" nolabel="1" readonly="state == 'sold'"
+                                           placeholder="This note is only for internal purposes."/>
+                                </group>
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="product_view_tree" model="ir.ui.view">
+            <field name="name">product.view.tree</field>
+            <field name="model">product.product</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="lst_price"/>
+                    <field name="size"/>
+                    <field name="barcode"/>
+                    <field name="color_id"/>
+                    <field name="year"/>
+                    <field name="brand_id"/>
+                    <field name="model_id"/>
+                    <field name="state" widget="badge"
+                           decoration-success="state == 'available'"
+                           decoration-danger="state == 'sold'"/>
+
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="product_kanban_view" model="ir.ui.view">
+            <field name="name">product.product.kanban.view</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_kanban_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('o_kanban_image')]" position="before">
+                    <div class="ribbon ribbon-top-right"
+                         invisible="state != 'sold'">
+                        <span class="text-bg-danger">Sold</span>
+                    </div>
+                    <field name="state" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="product_template_search_view" model="ir.ui.view">
+            <field name="name">product.product.search</field>
+            <field name="model">product.product</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name" string="Product"
+                           filter_domain="['|',('name', 'ilike', self), ('barcode', 'ilike', self)]"/>
+                    <field name="size"/>
+                    <filter string="Available" name="filter_available" domain="[('state', '=', 'available')]"/>
+                    <filter string="Out Stock" name="filter_booked" domain="[('state', '=', 'out')]"/>
+                    <filter string="sold" name="filter_sold" domain="[('state', '=', 'sold')]"/>
+                    <group expand="1" string="Group By">
+                        <filter string="Size" name="size" context="{'group_by':'size'}"/>
+                        <filter string="Year" name="year" context="{'group_by':'year'}"/>
+                        <filter string="Color" name="color" context="{'group_by':'color_id'}"/>
+                        <filter string="Brand" name="brand" context="{'group_by':'brand_id'}"/>
+                        <filter string="Model" name="model" context="{'group_by':'model_id'}"/>
+                        <filter string="State" name="state" context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="product_action" model="ir.actions.act_window">
+            <field name="name">Products</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.product</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="search_view_id" ref="rental.product_template_search_view"/>
+
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new product
+                </p>
+            </field>
+        </record>
+
+
+        <record id="product_color_view_tree" model="ir.ui.view">
+            <field name="name">product.color.view.tree</field>
+            <field name="model">product.color</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="sequence" widget="handle"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="product_color_action" model="ir.actions.act_window">
+            <field name="name">Colors</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.color</field>
+            <field name="view_mode">tree</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new Color
+                </p>
+            </field>
+        </record>
+
+        <record id="product_brand_view_tree" model="ir.ui.view">
+            <field name="name">product.brand.view.tree</field>
+            <field name="model">product.brand</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="sequence" widget="handle"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="product_brand_action" model="ir.actions.act_window">
+            <field name="name">Brand</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.brand</field>
+            <field name="view_mode">tree</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new Color
+                </p>
+            </field>
+        </record>
+
+        <record id="product_model_view_tree" model="ir.ui.view">
+            <field name="name">product.model.view.tree</field>
+            <field name="model">product.model</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="sequence" widget="handle"/>
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="product_model_action" model="ir.actions.act_window">
+            <field name="name">Model</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.model</field>
+            <field name="view_mode">tree</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new Model
+                </p>
+            </field>
+        </record>
+
+
+        <menuitem id="product_menu" name="Products" parent="rental_root"
+                  action="product_action" sequence="2"/>
+
+        <menuitem id="rental_config_menu" name="Configuration" parent="rental_root"
+                  sequence="40"/>
+
+        <menuitem id="product_color_menu" action="product_color_action" parent="rental_config_menu" sequence="1"/>
+        <menuitem id="product_brand_menu" action="product_brand_action" parent="rental_config_menu" sequence="2"/>
+        <menuitem id="product_model_menu" action="product_model_action" parent="rental_config_menu" sequence="3"/>
+
+
+    </data>
+</odoo>

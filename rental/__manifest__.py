@@ -4,7 +4,7 @@
     'summary': "Rental Management",
     'category': 'sale',
     'version': '16.0.1',
-    'depends': ['account', 'sale'],
+    'depends': ['mail', 'product'],
     'data': [
         'security/ir.model.access.csv',
 

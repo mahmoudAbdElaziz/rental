@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="customer_view_form" model="ir.ui.view">
+            <field name="name">res.customer.form</field>
+            <field name="model">res.customer</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <field name="image_1920" widget="image" class="oe_avatar"
+                               options="{'preview_image': 'image_128'}"/>
+                        <div class="oe_title">
+                            <label for="name" string="Product Name"/>
+                            <h1>
+                                <div class="d-flex">
+                                    <field class="text-break" name="name" options="{'line_breaks': False}" widget="text"
+                                           placeholder="e.g. Mohamed"/>
+                                </div>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="mobile"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Orders">
+                                <field name="rental_ids" readonly="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="customer_view_tree" model="ir.ui.view">
+            <field name="name">res.customer.tree</field>
+            <field name="model">res.customer</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="mobile"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="customer_action" model="ir.actions.act_window">
+            <field name="name">Customers</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.customer</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new Customer
+                </p>
+            </field>
+        </record>
+
+
+        <menuitem id="customer_menu" name="Customers" parent="rental_root"
+                  action="customer_action" sequence="3"/>
+
+
+    </data>
+</odoo>

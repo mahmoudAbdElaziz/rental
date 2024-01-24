@@ -10,8 +10,9 @@ class RenalOrder(models.Model):
     _inherit = ['mail.thread']
 
     name = fields.Char(default="New", readonly=True, copy=False, string="Number")
-    partner_id = fields.Many2one('res.partner', 'Customer', required=True)
-    mobile = fields.Char(related='partner_id.mobile', readonly=False)
+    customer_id = fields.Many2one('res.customer', 'Customer', required=True)
+    sales_id = fields.Many2one('res.sales.man', 'Sales', required=True)
+    mobile = fields.Char(related='customer_id.mobile', readonly=False)
     date_from = fields.Date(default=lambda self: fields.Date.today(), required=True)
     date_to = fields.Date(default=lambda self: fields.Date.today() + relativedelta(days=3), required=True)
     confirmation_date = fields.Date(readonly=True, copy=False)
@@ -102,8 +103,8 @@ class RenalOrderLine(models.Model):
     _description = 'Renal Order Line'
 
     order_id = fields.Many2one('rental.order', ondelete='cascade')
-    partner_id = fields.Many2one(related='order_id.partner_id')
-    mobile = fields.Char(related='partner_id.mobile')
+    customer_id = fields.Many2one(related='order_id.customer_id')
+    mobile = fields.Char(related='customer_id.mobile')
     name = fields.Char(related='order_id.name')
     product_id = fields.Many2one('product.product', required=True)
     price = fields.Integer()

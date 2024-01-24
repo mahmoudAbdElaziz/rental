@@ -27,10 +27,11 @@
                         </div>
                         <group>
                             <group>
-                                <field name="partner_id" widget="res_partner_many2one"
+                                <field name="customer_id" widget="res_partner_many2one"
                                        placeholder="Type to find a customer..." readonly="state != 'pending'"/>
 
                                 <field name="mobile" readonly="state != 'pending'"/>
+                                <field name="sales_id" readonly="state != 'pending'"/>
                             </group>
                             <group>
                                 <label for="date_from" string="Period"/>
@@ -90,8 +91,9 @@
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
-                    <field name="partner_id"/>
+                    <field name="customer_id"/>
                     <field name="mobile"/>
+                    <field name="sales_id"/>
                     <field name="date_from"/>
                     <field name="date_to"/>
                     <field name="paid_amount"/>

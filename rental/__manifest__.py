@@ -10,6 +10,8 @@
 
         'views/rental_order.xml',
         'views/product.xml',
+        'views/customer.xml',
+        'views/sales_man.xml',
 
         'data/colors.xml',
         'data/product.xml',

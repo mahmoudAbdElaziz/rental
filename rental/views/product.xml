@@ -71,7 +71,7 @@
                                 <field name="rental_line_ids">
                                     <tree editable="bottom" create="false" delete="false">
                                         <field name="name"/>
-                                        <field name="partner_id"/>
+                                        <field name="customer_id"/>
                                         <field name="mobile"/>
                                         <field name="date_from"/>
                                         <field name="date_to"/>

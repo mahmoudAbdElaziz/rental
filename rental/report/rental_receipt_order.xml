@@ -34,7 +34,7 @@
                             <strong>
                                 Customer:
                             </strong>
-                            <span t-field="o.partner_id.name"/>
+                            <span t-field="o.customer_id.name"/>
                         </div>
                         <div>
                             <strong>

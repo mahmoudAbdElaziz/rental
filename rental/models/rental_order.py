@@ -56,10 +56,18 @@ class RenalOrder(models.Model):
             rec.product_ids = rec.line_ids.mapped('product_id').ids
 
     def print_receipt(self):
-        return self.env.ref('rental.rental_receipt_order').report_action(self)
+        return {
+            'target': 'new',
+            'type': 'ir.actions.act_url',
+            'url': '/report/pdf/rental.rental_receipt_order/%s' % self.id
+        }
 
     def print_detailed_order(self):
-        return self.env.ref('rental.rental_detailed_order').report_action(self)
+        return {
+            'target': 'new',
+            'type': 'ir.actions.act_url',
+            'url': '/report/pdf/rental.rental_detailed_order/%s' % self.id
+        }
 
     def unlink(self):
         if self.state != 'cancel':

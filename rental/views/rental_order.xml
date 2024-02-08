@@ -10,13 +10,16 @@
                     <header>
                         <button name="confirm_action" string="Confirm" class="oe_highlight"
                                 invisible="state != 'pending'" type="object"/>
+                        <button name="action_register_payment" string="Register Payment" class="oe_highlight"
+                                invisible="state not in ('cancel','return')" type="object"/>
                         <button name="pickup_action" string="Customer Pickup" class="oe_highlight"
                                 invisible="state != 'confirm'" type="object"/>
                         <button name="return_action" string="Return" class="oe_highlight"
                                 invisible="state != 'pickup'" type="object"/>
                         <button name="cancel_action" string="Cancel" class="oe_highlight"
                                 invisible="state not in ('confirm')" type="object"/>
-                        <button name="print_receipt" string="Print Receipt" type="object"/>
+                        <button name="print_receipt" string="Print Receipt" icon="fa-print" type="object"/>
+                        <button name="print_detailed_order" string="Print Details" icon="fa-bars" type="object"/>
                         <field name="state" widget="statusbar" statusbar_visible="pending,confirm,pickup,return"/>
                     </header>
                     <sheet>
@@ -32,6 +35,8 @@
 
                                 <field name="mobile" readonly="state != 'pending'"/>
                                 <field name="sales_id" readonly="state != 'pending'"/>
+                                <field name="create_date"/>
+
                             </group>
                             <group>
                                 <label for="date_from" string="Period"/>
@@ -44,7 +49,7 @@
                                            readonly="state != 'pending'"
                                            options="{'related_start_date': 'date_from'}"/>
                                 </div>
-                                <field name="paid_amount" readonly="state not in ('pending','confirm','pickup')"/>
+                                <field name="paid_amount" readonly="1"/>
                                 <field name="remainder_amount"/>
                                 <field name="total_amount"/>
                                 <field name="product_ids" invisible="1"/>
@@ -54,7 +59,9 @@
                             <page string="Products">
                                 <field name="line_ids" readonly="state != 'pending'">
                                     <tree editable="bottom">
-                                        <field name="product_id" domain="[('id','not in',parent.product_ids)]"/>
+                                        <field name="product_id" options="{'no_create':True}" domain="[('id','not in',parent.product_ids),
+                                        ('type', '=', 'rental'),
+                                        ('state', '!=', 'sold')]"/>
                                         <field name="price"/>
                                         <field name="size"/>
                                         <field name="color_id"/>
@@ -66,14 +73,14 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page string="Other Info">
-                                <group>
-                                    <group>
-                                        <field name="confirmation_date"/>
-                                        <field name="pickup_date"/>
-                                        <field name="return_date"/>
-                                    </group>
-                                </group>
+                            <page string="Payment">
+                                <field name="payment_ids" readonly="1">
+                                    <tree>
+                                        <field name="date"/>
+                                        <field name="amount" sum="amount"/>
+                                        <field name="ref"/>
+                                    </tree>
+                                </field>
                             </page>
                         </notebook>
                     </sheet>
@@ -101,6 +108,7 @@
                     <field name="total_amount"/>
                     <field name="is_late" optional="hide"/>
                     <field name="product_ids" widget="many2many_tags" optional="hide"/>
+                    <field name="create_date"/>
                     <field name="state" widget="badge"
                            decoration-success="state in ('confirm','pickup')"
                            decoration-danger="state == 'cancel'"/>

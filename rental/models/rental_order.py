@@ -13,8 +13,8 @@ class RenalOrder(models.Model):
     customer_id = fields.Many2one('res.customer', 'Customer', required=True)
     sales_id = fields.Many2one('res.sales.man', 'Sales', required=True)
     mobile = fields.Char(related='customer_id.mobile', readonly=False)
-    date_from = fields.Date(default=lambda self: fields.Date.today(), required=True)
-    date_to = fields.Date(default=lambda self: fields.Date.today() + relativedelta(days=3), required=True)
+    date_from = fields.Date(default=lambda self: fields.Date.today(), required=True, string="From")
+    date_to = fields.Date(default=lambda self: fields.Date.today() + relativedelta(days=3), required=True, string="To")
     confirmation_date = fields.Date(readonly=True, copy=False)
     pickup_date = fields.Date(readonly=True, copy=False)
     return_date = fields.Date(readonly=True, copy=False)
@@ -25,11 +25,30 @@ class RenalOrder(models.Model):
                               ('pickup', 'Pickup'),
                               ('return', 'Returned'),
                               ('cancel', 'Cancelled')], default='pending', copy=False)
-    paid_amount = fields.Integer()
-    remainder_amount = fields.Integer(compute='_compute_amounts')
+    paid_amount = fields.Integer(string='Paid', compute='_compute_amounts', )
+    remainder_amount = fields.Integer(compute='_compute_amounts', string='Remainder')
     total_amount = fields.Integer(compute='_compute_amounts')
     company_id = fields.Many2one('res.company', readonly=True, default=lambda self: self.env.company)
     product_ids = fields.Many2many('product.product', compute='_compute_line_products', string="Products")
+    payment_ids = fields.One2many('account.payment', 'rental_order_id')
+
+    def action_register_payment(self):
+        context = {'default_payment_type': 'inbound',
+                   'default_partner_type': 'customer',
+                   'default_rental_order_id': self.id,
+                   'default_amount': self.remainder_amount,
+                   'default_partner_id': self.customer_id.partner_id.id,
+                   'default_move_journal_types': ('cash'),
+                   'display_account_trust': True}
+        return {
+            'name': _('Register Payment'),
+            'res_model': 'account.payment',
+            'view_mode': 'form',
+            'target': 'new',
+            'view_id': self.env.ref('rental.account_payment_form').id,
+            'type': 'ir.actions.act_window',
+            'context': context
+        }
 
     @api.depends('line_ids', 'line_ids.product_id')
     def _compute_line_products(self):
@@ -39,14 +58,18 @@ class RenalOrder(models.Model):
     def print_receipt(self):
         return self.env.ref('rental.rental_receipt_order').report_action(self)
 
+    def print_detailed_order(self):
+        return self.env.ref('rental.rental_detailed_order').report_action(self)
+
     def unlink(self):
         if self.state != 'cancel':
             raise ValidationError(_('Only canceled Order Can Be deleted'))
         return super(RenalOrder, self).unlink()
 
-    @api.depends('line_ids', 'paid_amount')
+    @api.depends('payment_ids')
     def _compute_amounts(self):
         for rec in self:
+            rec.paid_amount = sum(x.amount for x in rec.payment_ids)
             rec.total_amount = sum(x.price for x in rec.line_ids)
             rec.remainder_amount = rec.total_amount - rec.paid_amount
 
@@ -106,7 +129,8 @@ class RenalOrderLine(models.Model):
     customer_id = fields.Many2one(related='order_id.customer_id')
     mobile = fields.Char(related='customer_id.mobile')
     name = fields.Char(related='order_id.name')
-    product_id = fields.Many2one('product.product', required=True)
+    product_id = fields.Many2one('product.product', domain=[('type', '=', 'rental'), ('state', '!=', 'sold')],
+                                 required=True)
     price = fields.Integer()
     notes = fields.Char(string="Comments")
     year = fields.Selection(related='product_id.year')

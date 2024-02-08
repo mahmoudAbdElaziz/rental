@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="rental_detailed_order" model="ir.actions.report">
+        <field name="name">Rental Detailed Order</field>
+        <field name="model">rental.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">rental.rental_detailed_order_template</field>
+        <field name="report_file">rental.rental_detailed_order_template</field>
+        <field name="print_report_name">'Detailed - %s' % (object.name).replace('/', '')</field>
+        <field name="binding_model_id" ref="model_rental_order"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="rental.pos_paperformat"/>
+    </record>
+
+    <template id="rental_detailed_order_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <div id="invoice-POS" style="margin-left: 5px;margin-right: 5px;line-height:26px">
+                    <center id="top">
+                        <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)"
+                             style="max-height: 150px; margin-bottom: -10px;" alt="Logo"/>
+                        <h4>
+                            <strong>
+                                <span t-field="o.company_id.name"/>
+                            </strong>
+                            <br></br>
+                            <span t-field="o.name"/>
+                        </h4>
+                    </center>
+                    <div id="mid" style="margin-bottom: 10px;">
+                        <div>
+                            <strong>
+                                Date:
+                            </strong>
+                            <span t-field="o.create_date"/>
+                        </div>
+                        <div>
+                            <strong>
+                                Customer:
+                            </strong>
+                            <span t-field="o.customer_id.name"/>
+                        </div>
+                        <div>
+                            <strong>
+                                mobile:
+                            </strong>
+                            <span t-field="o.mobile"/>
+                        </div>
+                    </div>
+                    <style>
+                        table {
+                        border-collapse: collapse;
+                        width: 100%;
+                        }
+                        table td, table th {
+                        border: 1px solid #bebebe;
+                        padding: 5px;
+                        }
+                        table th {
+                        padding-top: 12px;
+                        padding-bottom: 12px;
+                        background-color: #e7e7e7;
+                        }
+                    </style>
+                    <table class="text-start">
+                        <tbody>
+                            <t t-foreach="o.line_ids" t-as="line">
+
+
+                                <tr>
+                                    <th style="width: 40%;">
+                                        <strong>Product</strong>
+                                    </th>
+                                    <td>
+                                        <span t-field="line.product_id.name"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        <strong>Code</strong>
+                                    </th>
+                                    <td>
+                                        <span t-field="line.product_id.barcode"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        <strong>Comments</strong>
+                                    </th>
+                                    <td>
+                                        <span t-field="line.notes"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"></td>
+                                </tr>
+                            </t>
+
+                        </tbody>
+                    </table>
+                    <br/>
+
+
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

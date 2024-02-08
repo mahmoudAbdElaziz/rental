@@ -32,6 +32,7 @@ class Product(models.Model):
                              default='available')
     rental_line_ids = fields.One2many('rental.order.line', 'product_id', domain=[('order_id', '!=', False)])
     booking_count = fields.Integer(compute='_compute_booking_count')
+    type = fields.Selection([('rental', 'Rental'), ('sale', 'Sale')], default='rental')
 
     @api.depends('rental_line_ids')
     def _compute_booking_count(self):

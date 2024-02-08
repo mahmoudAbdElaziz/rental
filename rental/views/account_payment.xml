@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="account_payment_form" model="ir.ui.view">
+            <field name="name">account.payment.form</field>
+            <field name="model">account.payment</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <field name="suitable_journal_ids" invisible="1"/>
+                        <group>
+                            <group>
+                                <field name="amount"/>
+                                <field name="journal_id" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="date"/>
+                                <field name="ref"/>
+                            </group>
+                        </group>
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+
+
+        <record id="account_payment_tree" model="ir.ui.view">
+            <field name="name">account.payment.tree</field>
+            <field name="model">account.payment</field>
+            <field name="arch" type="xml">
+                <tree delete="0" create="0">
+                    <field name="rental_order_id"/>
+                    <field name="partner_id"/>
+                    <field name="date"/>
+                    <field name="amount" sum="Amount"/>
+                    <field name="currency_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="account_payment_search" model="ir.ui.view">
+            <field name="name">account.payment.search</field>
+            <field name="model">account.payment</field>
+            <field name="arch" type="xml">
+                <search string="">
+                    <field name="rental_order_id" string="string"/>
+                    <field name="partner_id" string="string"/>
+                    <field name="partner_id" string="string"/>
+                    <separator/>
+                    <filter invisible="1" string="Today Payments" name="payments_today"
+                            domain="[('date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                    <filter string="Payment Date" name="date" date="date"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter string="Date" name="group_date"
+                                context="{'group_by': 'date'}"/>
+                        <filter string="Customer" name="group_partner_id"
+                                context="{'group_by': 'partner_id'}"/>
+                        <filter string="Rental Order" name="group_rental_order_id"
+                                context="{'group_by': 'rental_order_id'}"/>
+                    </group>
+
+                </search>
+            </field>
+        </record>
+
+        <record id="account_payment_action" model="ir.actions.act_window">
+            <field name="name">Payments</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">account.payment</field>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="account_payment_tree"/>
+            <field name="search_view_id" ref="account_payment_search"/>
+        </record>
+
+        <menuitem id="payment_menuitem" name="Payments" parent="rental_root" action="account_payment_action"
+                  sequence="2"/>
+
+
+    </data>
+</odoo>

@@ -9,9 +9,10 @@
             <field name="arch" type="xml">
                 <form>
                     <header>
-                        <button name="booking_action" string="Booking" invisible="state != 'available'"
+                        <button name="booking_action" string="Booking"
+                                invisible="state != 'available' or type == 'sale' "
                                 class="oe_highlight" type="object"/>
-                        <button name="selling_action" string="Selling" invisible="state != 'available'" type="object"/>
+                        <button name="selling_action" string="Selling" invisible="1" type="object"/>
                         <button name="back_action" string="Back To Stock" invisible="state != 'sold'" type="object"/>
                         <field name="state" widget="statusbar" statusbar_visible="available,out,sold"/>
                     </header>
@@ -21,6 +22,7 @@
                             <button class="oe_stat_button"
                                     name="open_booking_list"
                                     type="object"
+                                    invisible="type == 'sale'"
                                     icon="fa-list-ul">
                                 <field string="Rentals" name="booking_count" widget="statinfo"/>
                             </button>
@@ -36,8 +38,6 @@
                                 invisible="state != 'out'"/>
                         <widget name="web_ribbon" title="Sold" bg_color="text-bg-danger"
                                 invisible="state != 'sold'"/>
-
-
                         <field name="image_1920" widget="image" class="oe_avatar"
                                options="{'preview_image': 'image_128'}"/>
                         <div class="oe_title">
@@ -53,8 +53,9 @@
                         </div>
                         <group>
                             <group>
+                                <field name="type" invisible="1" widget="radio" options="{'horizontal': True}"/>
                                 <field name="lst_price" readonly="state == 'sold'"/>
-                                <field name="standard_price" readonly="state == 'sold'"/>
+                                <field name="standard_price" readonly="state == 'sold'" groups="base.group_system"/>
                                 <field name="size" placeholder="45" readonly="state == 'sold'"/>
                                 <field name="barcode" placeholder="12345679" readonly="state == 'sold'"/>
                             </group>
@@ -67,7 +68,7 @@
                         </group>
                         <!--                          <field name="product_properties" columns="2"/>-->
                         <notebook>
-                            <page name="rental" string="Rentals">
+                            <page name="rental" string="Rentals" invisible="type == 'sale'">
                                 <field name="rental_line_ids">
                                     <tree editable="bottom" create="false" delete="false">
                                         <field name="name"/>
@@ -81,6 +82,7 @@
                                         <field name="state" widget="badge"
                                                decoration-success="state in ('confirm','pickup')"
                                                decoration-danger="state == 'cancel'"/>
+                                        <field name="create_date"/>
                                         <button name="view_booking_action" type="object" string="View"/>
                                     </tree>
                                 </field>
@@ -160,19 +162,34 @@
         </record>
 
 
-        <record id="product_action" model="ir.actions.act_window">
-            <field name="name">Products</field>
+        <record id="rental_product_action" model="ir.actions.act_window">
+            <field name="name">Rental Products</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">product.product</field>
             <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('type','=','rental')]</field>
+            <field name="context">{'default_type': 'rental'}</field>
             <field name="search_view_id" ref="rental.product_template_search_view"/>
-
-            <field name="help" type="html">
-                <p class="o_view_nocontent_smiling_face">
-                    Create a new product
-                </p>
-            </field>
         </record>
+
+        <record id="sale_product_action" model="ir.actions.act_window">
+            <field name="name">Sale Products</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.product</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('type','=','sale')]</field>
+            <field name="context">{'default_type': 'sale'}</field>
+            <field name="search_view_id" ref="rental.product_template_search_view"/>
+        </record>
+
+        <menuitem id="product_menu" name="Products" parent="rental_root"
+                  sequence="3"/>
+
+        <menuitem id="rental_product_menu" name="Rental Products" parent="product_menu"
+                  action="rental_product_action" sequence="1"/>
+
+        <menuitem id="sale_product_menu" name="Sale Products" parent="product_menu"
+                  action="sale_product_action" sequence="2"/>
 
 
         <record id="product_color_view_tree" model="ir.ui.view">
@@ -244,9 +261,6 @@
             </field>
         </record>
 
-
-        <menuitem id="product_menu" name="Products" parent="rental_root"
-                  action="product_action" sequence="2"/>
 
         <menuitem id="rental_config_menu" name="Configuration" parent="rental_root"
                   sequence="40"/>

@@ -14,117 +14,133 @@
 
     <template id="rental_receipt_order_template">
         <t t-call="web.html_container">
-            <t t-foreach="docs" t-as="o">
-                <div id="invoice-POS" style="margin-left: 5px;margin-right: 5px;line-height:26px">
-                    <center id="top">
-                        <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)"
-                             style="max-height: 150px; margin-bottom: -10px;" alt="Logo"/>
-                        <h4>
-                            <strong>
-                                <span t-field="o.company_id.name"/>
-                            </strong>
-                            <br></br>
-                            <span t-field="o.name"/>
-                        </h4>
-                    </center>
-                    <div id="mid" style="margin-bottom: 10px;">
-                        <div>
-                            <strong>
-                                Date:
-                            </strong>
-                            <span t-field="o.create_date"/>
+            <t t-call="rental.internal_layout">
+                <t t-foreach="docs" t-as="o">
+                    <div id="invoice-POS"
+                         style="text-align: right; margin-left: 5px;margin-right: 5px;line-height:26px,direction:rtl;">
+                        <center id="top">
+                            <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)"
+                                 style="max-height: 150px; margin-bottom: 5px;" alt="Logo"/>
+                            <h4>
+                                <strong>
+                                    <span t-field="o.company_id.name"/>
+                                </strong>
+                                <br></br>
+                                <span t-field="o.name"/>
+                            </h4>
+                        </center>
+                        <div id="mid" style="margin-bottom: 10px; text-al">
+                            <div>
+                                <strong>
+                                    التاريخ:
+                                </strong>
+                                <span t-field="o.create_date"/>
+                            </div>
+                            <div>
+                                <strong>
+                                    العميل:
+                                </strong>
+                                <span t-field="o.customer_id.name"/>
+                            </div>
+                            <div>
+                                <strong>
+                                    الهاتف:
+                                </strong>
+                                <span t-field="o.mobile"/>
+                            </div>
+                            <div>
+                                <strong>
+                                    الإيجار:
+                                </strong>
+
+                                <span t-field="o.date_from"/>
+                                <i class="fa fa-arrow-left"/>
+                                <span t-field="o.date_to"/>
+                            </div>
                         </div>
-                        <div>
-                            <strong>
-                                Customer:
-                            </strong>
-                            <span t-field="o.customer_id.name"/>
-                        </div>
-                        <div>
-                            <strong>
-                                mobile:
-                            </strong>
-                            <span t-field="o.mobile"/>
-                        </div>
-                    </div>
-                    <style>
-                        table {
-                        border-collapse: collapse;
-                        width: 100%;
-                        }
-                        table td, table th {
-                        border: 1px solid #bebebe;
-                        padding: 5px;
-                        }
-                        table th {
-                        padding-top: 12px;
-                        padding-bottom: 12px;
-                        background-color: #e7e7e7;
-                        }
-                    </style>
-                    <table class="text-start">
-                        <thead>
+                        <style>
+                            table {
+                            border-collapse: collapse;
+                            width: 100%;
+                            }
+                            table td, table th {
+                            border: 1px solid #bebebe;
+                            padding: 2px;
+                            text-align: right;
+                            }
+                            table th {
+                            padding-top: 5px;
+                            padding-bottom: 5px;
+                            text-align: center;
+                            background-color: #e7e7e7;
+                            }
+                        </style>
+                        <table class="text-start">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%;">
+                                        <strong>السعر</strong>
+                                    </th>
+
+                                    <th style="width: 30%;">
+                                        <strong>الكود</strong>
+                                    </th>
+                                    <th style="width: 30%;">
+                                        <strong>الصنف</strong>
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.line_ids" t-as="line">
+                                    <td>
+                                        <span t-field="line.price"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.product_id.barcode"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.product_id.name"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="text-start" style="margin-top: 10px;">
                             <tr>
-                                <th style="width: 30%;">
-                                    <strong>Product</strong>
-                                </th>
-                                <th style="width: 30%;">
-                                    <strong>Code</strong>
-                                </th>
-                                <th style="width: 10%;">
-                                    <strong>Price</strong>
+                                <td>
+                                    <span t-field="o.total_amount"/>
+                                </td>
+                                <th style="width: 40%;">
+                                    <strong>الاجمالى</strong>
                                 </th>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <tr t-foreach="o.line_ids" t-as="line">
+                            <tr>
                                 <td>
-                                    <span t-field="line.product_id.name"/>
+                                    <span t-field="o.paid_amount"/>
                                 </td>
-                                <td>
-                                    <span t-field="line.product_id.barcode"/>
-                                </td>
-                                <td>
-                                    <span t-field="line.price"/>
-                                </td>
+                                <th>
+                                    <strong>المدفوع</strong>
+                                </th>
                             </tr>
-                        </tbody>
-                    </table>
-                    <br/>
-                    <table class="text-start">
-                        <tr>
-                            <th style="width: 40%;">
-                                <strong>Total</strong>
-                            </th>
-                            <td>
-                                <span t-field="o.total_amount"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                <strong>Paid</strong>
-                            </th>
-                            <td>
-                                <span t-field="o.paid_amount"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                <strong>Remainder</strong>
-                            </th>
-                            <td>
-                                <span t-field="o.remainder_amount"/>
-                            </td>
-                        </tr>
-                    </table>
+                            <tr>
+                                <td>
+                                    <span t-field="o.remainder_amount"/>
+                                </td>
+                                <th>
+                                    <strong>المتبقى</strong>
+                                </th>
+                            </tr>
+                        </table>
+                        <br/>
+                        <center id="top">
+                            <p>
+                                <span>... شكرًا لزيارتكم واختياركم لنا</span>
+                            </p>
+                        </center>
 
-                    <center id="top">
-                        <p>
-                            <span>Thanks For Your Visiting...</span>
-                        </p>
-                    </center>
-
-                </div>
+                    </div>
+                </t>
             </t>
         </t>
     </template>

@@ -1,17 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-        <record id="pos_paperformat" model="report.paperformat">
-            <field name="name">Pos</field>
-            <field name="default" eval="True"/>
-            <field name="format">custom</field>
-            <field name="page_height">290</field>
-            <field name="page_width">80</field>
-           <field name="orientation">Portrait</field>
-            <field name="margin_top">5</field>
-            <field name="margin_bottom">5</field>
-            <field name="margin_left">1</field>
-            <field name="margin_right">1</field>
-            <field name="header_spacing">0</field>
-            <field name="dpi">90</field>
-        </record>
+    <record id="pos_paperformat" model="report.paperformat">
+        <field name="name">Pos</field>
+        <field name="default" eval="True"/>
+        <field name="format">custom</field>
+        <field name="page_height">290</field>
+        <field name="page_width">80</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">5</field>
+        <field name="margin_bottom">5</field>
+        <field name="margin_left">1</field>
+        <field name="margin_right">1</field>
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <template id="internal_layout">
+        <t t-if="not o" t-set="o" t-value="doc"/>
+
+        <t t-if="not company">
+            <!-- Multicompany -->
+            <t t-if="company_id">
+                <t t-set="company" t-value="company_id"/>
+            </t>
+            <t t-elif="o and 'company_id' in o and o.company_id.sudo()">
+                <t t-set="company" t-value="o.company_id.sudo()"/>
+            </t>
+            <t t-else="else">
+                <t t-set="company" t-value="res_company"/>
+            </t>
+        </t>
+
+        <div class="header">
+
+        </div>
+        <div class="article" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id"
+             t-att-data-oe-lang="o and o.env.context.get('lang')">
+            <t t-out="0"/>
+        </div>
+    </template>
 </odoo>

@@ -4,13 +4,14 @@
 
         <record id="product_view_form" model="ir.ui.view">
             <field name="name">product.view.form</field>
-            <field name="model">product.product</field>
+            <field name="model">product.template</field>
             <field name="priority">1</field>
             <field name="arch" type="xml">
                 <form>
                     <header>
+                        <field name="is_rental" invisible="1"/>
                         <button name="booking_action" string="Booking"
-                                invisible="state != 'available' or type == 'sale' "
+                                invisible="state != 'available' or not is_rental"
                                 class="oe_highlight" type="object"/>
                         <button name="selling_action" string="Selling" invisible="1" type="object"/>
                         <button name="back_action" string="Back To Stock" invisible="state != 'sold'" type="object"/>
@@ -22,7 +23,7 @@
                             <button class="oe_stat_button"
                                     name="open_booking_list"
                                     type="object"
-                                    invisible="type == 'sale'"
+                                    invisible="not is_rental"
                                     icon="fa-list-ul">
                                 <field string="Rentals" name="booking_count" widget="statinfo"/>
                             </button>
@@ -53,8 +54,8 @@
                         </div>
                         <group>
                             <group>
-                                <field name="type" invisible="1" widget="radio" options="{'horizontal': True}"/>
-                                <field name="lst_price" readonly="state == 'sold'"/>
+                                <field name="detailed_type" invisible="1"/>
+                                <field name="list_price" readonly="state == 'sold'"/>
                                 <field name="standard_price" readonly="state == 'sold'" groups="base.group_system"/>
                                 <field name="size" placeholder="45" readonly="state == 'sold'"/>
                                 <field name="barcode" placeholder="12345679" readonly="state == 'sold'"/>
@@ -68,7 +69,7 @@
                         </group>
                         <!--                          <field name="product_properties" columns="2"/>-->
                         <notebook>
-                            <page name="rental" string="Rentals" invisible="type == 'sale'">
+                            <page name="rental" string="Rentals" invisible="not is_rental">
                                 <field name="rental_line_ids">
                                     <tree editable="bottom" create="false" delete="false">
                                         <field name="name"/>
@@ -102,12 +103,12 @@
 
         <record id="product_view_tree" model="ir.ui.view">
             <field name="name">product.view.tree</field>
-            <field name="model">product.product</field>
+            <field name="model">product.template</field>
             <field name="priority">1</field>
             <field name="arch" type="xml">
                 <tree>
                     <field name="name"/>
-                    <field name="lst_price"/>
+                    <field name="list_price"/>
                     <field name="size"/>
                     <field name="barcode"/>
                     <field name="color_id"/>
@@ -123,24 +124,24 @@
         </record>
 
 
-        <record id="product_kanban_view" model="ir.ui.view">
-            <field name="name">product.product.kanban.view</field>
-            <field name="model">product.product</field>
-            <field name="inherit_id" ref="product.product_kanban_view"/>
-            <field name="arch" type="xml">
-                <xpath expr="//div[hasclass('o_kanban_image')]" position="before">
-                    <div class="ribbon ribbon-top-right"
-                         invisible="state != 'sold'">
-                        <span class="text-bg-danger">Sold</span>
-                    </div>
-                    <field name="state" invisible="1"/>
-                </xpath>
-            </field>
-        </record>
+<!--        <record id="product_kanban_view" model="ir.ui.view">-->
+<!--            <field name="name">product.template.kanban.view</field>-->
+<!--            <field name="model">product.template</field>-->
+<!--            <field name="inherit_id" ref="product.template_kanban_view"/>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <xpath expr="//div[hasclass('o_kanban_image')]" position="before">-->
+<!--                    <div class="ribbon ribbon-top-right"-->
+<!--                         invisible="state != 'sold'">-->
+<!--                        <span class="text-bg-danger">Sold</span>-->
+<!--                    </div>-->
+<!--                    <field name="state" invisible="1"/>-->
+<!--                </xpath>-->
+<!--            </field>-->
+<!--        </record>-->
 
         <record id="product_template_search_view" model="ir.ui.view">
-            <field name="name">product.product.search</field>
-            <field name="model">product.product</field>
+            <field name="name">product.template.search</field>
+            <field name="model">product.template</field>
             <field name="arch" type="xml">
                 <search>
                     <field name="name" string="Product"
@@ -165,20 +166,20 @@
         <record id="rental_product_action" model="ir.actions.act_window">
             <field name="name">Rental Products</field>
             <field name="type">ir.actions.act_window</field>
-            <field name="res_model">product.product</field>
+            <field name="res_model">product.template</field>
             <field name="view_mode">kanban,tree,form</field>
-            <field name="domain">[('type','=','rental')]</field>
-            <field name="context">{'default_type': 'rental'}</field>
+            <field name="domain">[('is_rental','=',True)]</field>
+            <field name="context">{'default_is_rental': True}</field>
             <field name="search_view_id" ref="rental.product_template_search_view"/>
         </record>
 
         <record id="sale_product_action" model="ir.actions.act_window">
             <field name="name">Sale Products</field>
             <field name="type">ir.actions.act_window</field>
-            <field name="res_model">product.product</field>
+            <field name="res_model">product.template</field>
             <field name="view_mode">kanban,tree,form</field>
-            <field name="domain">[('type','=','sale')]</field>
-            <field name="context">{'default_type': 'sale'}</field>
+            <field name="domain">[('is_rental','=',False)]</field>
+            <field name="context">{'default_is_rental': False}</field>
             <field name="search_view_id" ref="rental.product_template_search_view"/>
         </record>
 

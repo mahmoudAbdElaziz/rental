@@ -17,7 +17,7 @@
             <t t-call="rental.internal_layout">
                 <t t-foreach="docs" t-as="o">
                     <div id="invoice-POS"
-                         style="text-align: right; margin-left: 5px;margin-right: 5px;line-height:26px,direction:rtl;">
+                         style="text-align: right; margin-left: 5px;margin-right: 5px;line-height:30px,direction:rtl;">
                         <center id="top">
                             <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)"
                                  style="max-height: 150px; margin-bottom: 5px;" alt="Logo"/>
@@ -29,14 +29,14 @@
                                 <span t-field="o.name"/>
                             </h4>
                         </center>
-                        <div id="mid" style="margin-bottom: 10px; text-al">
+                        <div id="mid" style="margin-bottom: 10px; direction:rtl;line-height:30px">
                             <div>
                                 <strong>
                                     التاريخ:
                                 </strong>
                                 <span t-field="o.create_date"/>
                             </div>
-                            <div>
+                            <div style="direction:rtl">
                                 <strong>
                                     العميل:
                                 </strong>
@@ -65,8 +65,8 @@
                             }
                             table td, table th {
                             border: 1px solid #bebebe;
-                            padding: 2px;
-                            text-align: right;
+                            padding: 3px;
+                            text-align: center;
                             }
                             table th {
                             padding-top: 5px;

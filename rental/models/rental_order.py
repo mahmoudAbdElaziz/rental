@@ -29,7 +29,7 @@ class RenalOrder(models.Model):
     remainder_amount = fields.Integer(compute='_compute_amounts', string='Remainder')
     total_amount = fields.Integer(compute='_compute_amounts')
     company_id = fields.Many2one('res.company', readonly=True, default=lambda self: self.env.company)
-    product_ids = fields.Many2many('product.product', compute='_compute_line_products', string="Products")
+    product_ids = fields.Many2many('product.template', compute='_compute_line_products', string="Products")
     payment_ids = fields.One2many('account.payment', 'rental_order_id')
 
     def action_register_payment(self):
@@ -85,11 +85,11 @@ class RenalOrder(models.Model):
     def default_get(self, fields):
         defaults = super(RenalOrder, self).default_get(fields)
         if 'default_product_id' in self.env.context:
-            product = self.env['product.product'].browse(self.env.context.get('default_product_id'))
+            product = self.env['product.template'].browse(self.env.context.get('default_product_id'))
 
             line = self.env['rental.order.line'].create({
                 'product_id': product.id,
-                'price': product.lst_price,
+                'price': product.list_price,
             })
             defaults['line_ids'] = line
         return defaults
@@ -137,7 +137,7 @@ class RenalOrderLine(models.Model):
     customer_id = fields.Many2one(related='order_id.customer_id')
     mobile = fields.Char(related='customer_id.mobile')
     name = fields.Char(related='order_id.name')
-    product_id = fields.Many2one('product.product', domain=[('type', '=', 'rental'), ('state', '!=', 'sold')],
+    product_id = fields.Many2one('product.template', domain=[('is_rental', '=', True), ('state', '!=', 'sold')],
                                  required=True)
     price = fields.Integer()
     notes = fields.Char(string="Comments")
@@ -172,7 +172,7 @@ class RenalOrderLine(models.Model):
 
     @api.onchange('product_id')
     def onchange_method(self):
-        self.price = self.product_id.lst_price
+        self.price = self.product_id.list_price
 
     def _check_dates(self):
         for rec in self:

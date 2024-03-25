@@ -4,15 +4,9 @@ from odoo.exceptions import ValidationError
 import base64
 from odoo.tools.misc import file_open
 
-class ProductTemplate(models.Model):
-    _inherit = 'product.template'
-
-    detailed_type = fields.Selection(selection_add=[
-        ('rental', 'Rental'), ('sale', 'Sale'), ], ondelete={'rental': 'set service', 'sale': 'set service'})
-    type = fields.Selection([('rental', 'Rental'), ('sale', 'Sale')], default='rental')
 
 class Product(models.Model):
-    _inherit = 'product.product'
+    _inherit = 'product.template'
     _order = 'barcode'
 
     def years_selection(self):
@@ -38,8 +32,8 @@ class Product(models.Model):
                              default='available')
     rental_line_ids = fields.One2many('rental.order.line', 'product_id', domain=[('order_id', '!=', False)])
     booking_count = fields.Integer(compute='_compute_booking_count')
-    type = fields.Selection([('rental', 'Rental'), ('sale', 'Sale')], default='rental')
 
+    is_rental = fields.Boolean()
 
     @api.depends('rental_line_ids')
     def _compute_booking_count(self):

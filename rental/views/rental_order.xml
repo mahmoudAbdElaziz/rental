@@ -60,7 +60,7 @@
                                 <field name="line_ids" readonly="state != 'pending'">
                                     <tree editable="bottom">
                                         <field name="product_id" options="{'no_create':True}" domain="[('id','not in',parent.product_ids),
-                                        ('type', '=', 'rental'),
+                                        ('is_rental', '=', True),
                                         ('state', '!=', 'sold')]"/>
                                         <field name="price"/>
                                         <field name="size"/>

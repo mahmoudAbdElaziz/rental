@@ -29,76 +29,87 @@
                                 <span t-field="o.name"/>
                             </h4>
                         </center>
-                        <div id="mid" style="margin-bottom: 10px;">
+                        <div id="mid" style="margin-bottom: 10px; direction:rtl;line-height:30px">
                             <div>
                                 <strong>
-                                    Date:
+                                    التاريخ:
                                 </strong>
                                 <span t-field="o.create_date"/>
                             </div>
-                            <div>
+                            <div style="direction:rtl">
                                 <strong>
-                                    Customer:
+                                    العميل:
                                 </strong>
                                 <span t-field="o.customer_id.name"/>
                             </div>
                             <div>
                                 <strong>
-                                    mobile:
+                                    الهاتف:
                                 </strong>
                                 <span t-field="o.mobile"/>
                             </div>
+                            <div>
+                                <strong>
+                                    الإيجار:
+                                </strong>
+
+                                <span t-field="o.date_from"/>
+                                <i class="fa fa-arrow-left"/>
+                                <span t-field="o.date_to"/>
+                            </div>
+                            <style>
+                                table {
+                                border-collapse: collapse;
+                                width: 100%;
+                                }
+                                table td, table th {
+                                border: 1px solid #bebebe;
+                                padding: 3px;
+                                text-align: center;
+                                }
+                                table th {
+                                padding-top: 5px;
+                                padding-bottom: 5px;
+                                text-align: center;
+                                background-color: #e7e7e7;
+                                }
+                            </style>
+                            <t t-foreach="o.line_ids" t-as="line">
+                                <table class="text-start" style="max-height: 150px; margin-bottom: 10px;">
+                                    <tbody>
+                                        <tr>
+                                            <th style="width: 25%;">
+                                                <strong>الصنف</strong>
+                                            </th>
+                                            <td>
+                                                <span t-field="line.product_id.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                <strong>الكود</strong>
+                                            </th>
+                                            <td>
+                                                <span t-field="line.product_id.barcode"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                <strong>التعديلات</strong>
+                                            </th>
+                                            <td>
+                                                <span t-field="line.notes"/>
+                                            </td>
+                                        </tr>
+
+
+                                    </tbody>
+                                </table>
+                            </t>
+                            <br/>
+
+
                         </div>
-                        <style>
-                            table {
-                            border-collapse: collapse;
-                            width: 100%;
-                            }
-                            table td, table th {
-                            border: 1px solid #bebebe;
-                            padding: 2px;
-                            }
-                            table th {
-                            padding-top: 5px;
-                            padding-bottom: 5px;
-                            background-color: #e7e7e7;
-                            }
-                        </style>
-                        <t t-foreach="o.line_ids" t-as="line">
-                            <table class="text-start" style="max-height: 150px; margin-bottom: 10px;">
-                                <tbody>
-                                    <tr>
-                                        <th style="width: 25%;">
-                                            <strong>Product</strong>
-                                        </th>
-                                        <td>
-                                            <span t-field="line.product_id.name"/>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>
-                                            <strong>Code</strong>
-                                        </th>
-                                        <td>
-                                            <span t-field="line.product_id.barcode"/>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>
-                                            <strong>Comments</strong>
-                                        </th>
-                                        <td>
-                                            <span t-field="line.notes"/>
-                                        </td>
-                                    </tr>
-
-
-                                </tbody>
-                            </table>
-                        </t>
-                        <br/>
-
-
                     </div>
                 </t>
             </t>

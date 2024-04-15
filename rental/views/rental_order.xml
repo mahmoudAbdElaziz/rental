@@ -11,7 +11,7 @@
                         <button name="confirm_action" string="Confirm" class="oe_highlight"
                                 invisible="state != 'pending'" type="object"/>
                         <button name="action_register_payment" string="Register Payment" class="oe_highlight"
-                                invisible="state not in ('cancel','return')" type="object"/>
+                                invisible="state in ('cancel','return')" type="object"/>
                         <button name="pickup_action" string="Customer Pickup" class="oe_highlight"
                                 invisible="state != 'confirm'" type="object"/>
                         <button name="return_action" string="Return" class="oe_highlight"
